@@ -20,8 +20,8 @@ import Navlogo from "./ui/image/logoNav.png";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/explore-studio", label: "Explore Studio" },
-  { href: "/", label: "How It Works" },
-  { href: "/", label: "About Us" },
+  { href: "/#how-it-works", label: "How It Works" },
+  { href: "/#about-us", label: "About Us" },
 ];
 
 const DASHBOARD_LINKS = [

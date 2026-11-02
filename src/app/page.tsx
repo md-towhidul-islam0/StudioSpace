@@ -1,7 +1,8 @@
-import CatagoryCard from '@/components/CatagoryCard';
-import HeroSection from '@/components/HeroSection';
-import TopCard from '@/components/TopCard';
-import React, { Suspense } from 'react';
+import { Suspense } from "react";
+import CatagoryCard from "@/components/CatagoryCard";
+import ExtraHomeSection from "@/components/ExtraHomeSection";
+import HeroSection from "@/components/HeroSection";
+import TopCard from "@/components/TopCard";
 
 const page = () => {
   return (
@@ -13,6 +14,8 @@ const page = () => {
       </Suspense>
 
       <TopCard></TopCard>
+
+      <ExtraHomeSection></ExtraHomeSection>
     </div>
   );
 };

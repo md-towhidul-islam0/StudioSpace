@@ -26,7 +26,7 @@ const NAV_LINKS = [
 
 const DASHBOARD_LINKS = [
   { href: "/", label: "Dashboard" },
-  { href: "/", label: "Add New Studio" },
+  { href: "/add-studio", label: "Add New Studio" },
   { href: "/", label: "My Studio Listings" },
 ];
 

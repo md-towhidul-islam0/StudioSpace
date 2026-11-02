@@ -97,6 +97,7 @@ const TopCard = () => {
   };
 
   return (
+    //top card section
     <section className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto my-12 md:my-16">
       {/* Section Header */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -301,6 +302,9 @@ const TopCard = () => {
                     </div>
 
                     {/* "View Details" Button */}
+                    
+
+
                     <div className="pt-2">
                       <Link
                         href={`/explore-studio/${encodeURIComponent(v._id)}`}

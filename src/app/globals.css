@@ -126,10 +126,38 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
+}
+
+
+.hero-swiper .swiper-button-next,
+.hero-swiper .swiper-button-prev {
+  color: white;
+  background: rgba(0, 0, 0, 0.35);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+
+.hero-swiper .swiper-button-next::after,
+.hero-swiper .swiper-button-prev::after {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+  background: white;
+  opacity: 0.65;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background: #f97316;
+  opacity: 1;
 }

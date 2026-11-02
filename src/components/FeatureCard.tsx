@@ -27,7 +27,7 @@ const FeatureCard = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-studio`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/allstudio`)
             const result = await res.json();
 
             setData(result);

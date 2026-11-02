@@ -5,7 +5,7 @@ const page = () => {
     return (
         <div>
             <Suspense fallback="Loading...........">
-                 <div className="">
+                 <div className="mt-10">
                      <FeatureCard></FeatureCard>
                  </div>
             </Suspense>

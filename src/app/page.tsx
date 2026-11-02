@@ -1,10 +1,18 @@
+import CatagoryCard from '@/components/CatagoryCard';
 import HeroSection from '@/components/HeroSection';
-import React from 'react';
+import TopCard from '@/components/TopCard';
+import React, { Suspense } from 'react';
 
 const page = () => {
   return (
     <div>
       <HeroSection></HeroSection>
+
+      <Suspense fallback="Loading...........">
+        <CatagoryCard></CatagoryCard>
+      </Suspense>
+
+      <TopCard></TopCard>
     </div>
   );
 };

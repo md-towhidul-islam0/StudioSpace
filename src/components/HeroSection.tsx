@@ -99,7 +99,7 @@ const HeroSection = () => {
 
                                 <div className="mt-8 flex flex-wrap justify-center gap-4">
                                     <Link
-                                        href="/studio"
+                                        href="/explore-studio"
                                         className="rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
                                     >
                                         Explore Studios →

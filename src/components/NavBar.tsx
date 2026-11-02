@@ -19,7 +19,7 @@ import Navlogo from "./ui/image/logoNav.png";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
-  { href: "/", label: "Explore Studio" },
+  { href: "/explore-studio", label: "Explore Studio" },
   { href: "/", label: "How It Works" },
   { href: "/", label: "About Us" },
 ];
@@ -48,7 +48,7 @@ const NavBar = () => {
   const handleLogOut = async () => {
     await authClient.signOut();
   };
-
+  console.log(typeof(pathname))
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex w-[85%] items-center justify-between py-2 md:w-[70%]">
@@ -70,7 +70,11 @@ const NavBar = () => {
             <Link
               key={`${link.href}-${index}`}
               href={link.href}
-              className={navLinkClass(pathname === link.href && index === 0)}
+               className={`px-2 py-1.5 text-[15px] transition hover:text-orange-500 ${
+                              pathname === link.href 
+                                ? "text-orange-500"
+                                : ""
+                            }`}
             >
               {link.label}
             </Link>
@@ -126,7 +130,7 @@ const NavBar = () => {
                             key={`mobile-${link.href}-${index}`}
                             href={link.href}
                             className={`px-2 py-1.5 text-[15px] transition hover:text-orange-500 ${
-                              pathname === link.href && index === 0
+                              pathname === link.href 
                                 ? "text-orange-500"
                                 : ""
                             }`}
@@ -140,7 +144,11 @@ const NavBar = () => {
                           <Link
                             key={link.label}
                             href={link.href}
-                            className="px-2 py-1.5 text-[13px] transition hover:text-orange-500"
+                            className={`px-2 py-1.5 text-[13px] transition hover:text-orange-500 ${
+                              pathname === link.href 
+                                ? "text-orange-500"
+                                : ""
+                            }`}
                           >
                             {link.label}
                           </Link>

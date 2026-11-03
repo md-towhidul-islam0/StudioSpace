@@ -43,6 +43,7 @@ import { type FormEvent, useMemo, useState } from "react";
 import Toast, { type ToastData } from "@/components/Toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
+import { redirect, useRouter } from "next/navigation";
 
 // Available studio categories with icons and descriptions
 const CATEGORIES = [
@@ -224,6 +225,8 @@ export default function AddStudioPage() {
     showToast("info", "Form reset to defaults.");
   };
 
+
+  const router = useRouter();
   // Form submission handler
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     console.log("Handel submit")
@@ -286,9 +289,10 @@ export default function AddStudioPage() {
       }
 
       showToast("success", "Studio listing published successfully!");
+      router.push('/my-listing');
     } catch {
       // Graceful fallback for UI demonstration
-      showToast("success", "Studio listing submitted successfully!");
+      showToast("error", "Failed to publish studio listing.");
     } finally {
       setIsSubmitting(false);
     }
@@ -371,22 +375,20 @@ export default function AddStudioPage() {
               <button
                 type="button"
                 onClick={() => setActivePreviewTab("form")}
-                className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                  activePreviewTab === "form"
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${activePreviewTab === "form"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 Edit Form
               </button>
               <button
                 type="button"
                 onClick={() => setActivePreviewTab("preview")}
-                className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition ${
-                  activePreviewTab === "preview"
-                    ? "bg-background text-orange-500 shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-medium transition ${activePreviewTab === "preview"
+                  ? "bg-background text-orange-500 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 <Eye className="h-3.5 w-3.5" />
                 Preview Card
@@ -421,9 +423,8 @@ export default function AddStudioPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Main Form Column */}
           <div
-            className={`space-y-6 lg:col-span-7 ${
-              activePreviewTab === "preview" ? "hidden lg:block" : "block"
-            }`}
+            className={`space-y-6 lg:col-span-7 ${activePreviewTab === "preview" ? "hidden lg:block" : "block"
+              }`}
           >
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               {/* SECTION 1: Read-Only User Host Information */}
@@ -598,11 +599,10 @@ export default function AddStudioPage() {
                             key={cat.id}
                             type="button"
                             onClick={() => setCategory(cat.id)}
-                            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
-                              isSelected
-                                ? "border-orange-500 bg-orange-500/10 text-orange-600 shadow-xs dark:text-orange-400"
-                                : "border-border bg-card text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground"
-                            }`}
+                            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition ${isSelected
+                              ? "border-orange-500 bg-orange-500/10 text-orange-600 shadow-xs dark:text-orange-400"
+                              : "border-border bg-card text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground"
+                              }`}
                           >
                             <Icon className={`h-3.5 w-3.5 ${isSelected ? "text-orange-500" : "text-muted-foreground"}`} />
                             {cat.label}
@@ -871,28 +871,25 @@ export default function AddStudioPage() {
                         key={amenity.id}
                         type="button"
                         onClick={() => toggleAmenity(amenity.label)}
-                        className={`flex items-center justify-between rounded-xl border p-3 text-left transition ${
-                          isChecked
-                            ? "border-orange-500 bg-orange-500/5 shadow-xs dark:bg-orange-500/10"
-                            : "border-border bg-background hover:border-border hover:bg-muted/40"
-                        }`}
+                        className={`flex items-center justify-between rounded-xl border p-3 text-left transition ${isChecked
+                          ? "border-orange-500 bg-orange-500/5 shadow-xs dark:bg-orange-500/10"
+                          : "border-border bg-background hover:border-border hover:bg-muted/40"
+                          }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <div
-                            className={`flex h-7 w-7 items-center justify-center rounded-md ${
-                              isChecked
-                                ? "bg-orange-500 text-white"
-                                : "bg-muted text-muted-foreground"
-                            }`}
+                            className={`flex h-7 w-7 items-center justify-center rounded-md ${isChecked
+                              ? "bg-orange-500 text-white"
+                              : "bg-muted text-muted-foreground"
+                              }`}
                           >
                             <Icon className="h-3.5 w-3.5" />
                           </div>
                           <span
-                            className={`text-xs font-medium ${
-                              isChecked
-                                ? "text-foreground font-semibold"
-                                : "text-muted-foreground"
-                            }`}
+                            className={`text-xs font-medium ${isChecked
+                              ? "text-foreground font-semibold"
+                              : "text-muted-foreground"
+                              }`}
                           >
                             {amenity.label}
                           </span>
@@ -900,11 +897,10 @@ export default function AddStudioPage() {
 
                         {/* Interactive Checkbox Indicator */}
                         <div
-                          className={`flex h-4 w-4 items-center justify-center rounded border transition ${
-                            isChecked
-                              ? "border-orange-500 bg-orange-500 text-white"
-                              : "border-muted-foreground/30 bg-card"
-                          }`}
+                          className={`flex h-4 w-4 items-center justify-center rounded border transition ${isChecked
+                            ? "border-orange-500 bg-orange-500 text-white"
+                            : "border-muted-foreground/30 bg-card"
+                            }`}
                         >
                           {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
                         </div>
@@ -950,27 +946,27 @@ export default function AddStudioPage() {
                   {selectedAmenities.some(
                     (a) => !PRESET_AMENITIES.some((pa) => pa.label === a)
                   ) && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      <span className="text-[11px] text-muted-foreground">Custom tags:</span>
-                      {selectedAmenities
-                        .filter((a) => !PRESET_AMENITIES.some((pa) => pa.label === a))
-                        .map((custom) => (
-                          <span
-                            key={custom}
-                            className="inline-flex items-center gap-1 rounded-full border border-orange-500/40 bg-orange-500/10 px-2.5 py-0.5 text-[11px] font-medium text-orange-600 dark:text-orange-400"
-                          >
-                            {custom}
-                            <button
-                              type="button"
-                              onClick={() => toggleAmenity(custom)}
-                              className="text-orange-500 hover:text-red-500"
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        <span className="text-[11px] text-muted-foreground">Custom tags:</span>
+                        {selectedAmenities
+                          .filter((a) => !PRESET_AMENITIES.some((pa) => pa.label === a))
+                          .map((custom) => (
+                            <span
+                              key={custom}
+                              className="inline-flex items-center gap-1 rounded-full border border-orange-500/40 bg-orange-500/10 px-2.5 py-0.5 text-[11px] font-medium text-orange-600 dark:text-orange-400"
                             >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </span>
-                        ))}
-                    </div>
-                  )}
+                              {custom}
+                              <button
+                                type="button"
+                                onClick={() => toggleAmenity(custom)}
+                                className="text-orange-500 hover:text-red-500"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            </span>
+                          ))}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -1061,9 +1057,8 @@ export default function AddStudioPage() {
 
           {/* Sticky Live Listing Preview Column (5 cols) */}
           <div
-            className={`space-y-6 lg:col-span-5 ${
-              activePreviewTab === "form" ? "hidden lg:block" : "block"
-            }`}
+            className={`space-y-6 lg:col-span-5 ${activePreviewTab === "form" ? "hidden lg:block" : "block"
+              }`}
           >
             <div className="sticky top-20 space-y-6">
               {/* Header for preview */}

@@ -254,14 +254,13 @@ const FeatureCardC = ({ id }: { id: string }) => {
 
                   {/* "View Details" Button */}
                   <div className="pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedStudio(v)}
+                    <Link
+                      href={`/explore-studio/eachDetials/${v._id}`}
                       className="group/btn flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-2.5 px-4 text-xs sm:text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-orange-600 hover:shadow-md hover:shadow-orange-500/25 active:scale-[0.98]"
                     >
                       <span>View Details</span>
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -28,7 +28,7 @@ const DASHBOARD_LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/add-studio", label: "Add New Studio" },
   { href: "/my-listing", label: "My Studio Listings" },
-  { href: "/", label: "My Booking" },
+  { href: "/booking-list", label: "My Booking" },
 ];
 
 const navLinkClass = (active: boolean) =>

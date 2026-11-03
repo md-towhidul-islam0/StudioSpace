@@ -366,14 +366,15 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setBookingLoading(true);
   setBookingSuccess(false);
+  const {_id,...otherData}=data;
 
   const payload = {
     studioId: data._id,
     studioTitle: data.title,
     hostEmail: data.userEmail,
     hostName: data.userName,
-    userEmail: session?.user?.email,
-    userName: session?.user?.name,
+    // userEmail: session?.user?.email,
+    // userName: session?.user?.name,
     bookingDate,
     bookingTime,
     bookingHours,
@@ -381,8 +382,10 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
     projectType,
     specialNotes: specialNotes.trim(),
     totalAmount,
-    createdAt: new Date().toISOString(),
+    // createdAt: new Date().toISOString(),
+    ...otherData
   };
+  
 
   try {
     const apiUrl =

@@ -99,7 +99,7 @@ const NavBar = () => {
                 LogIn
               </Link>
               <Link
-                href="/signin"
+                href="/signup"
                 className="rounded-lg bg-orange-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-orange-600"
               >
                 SignUp

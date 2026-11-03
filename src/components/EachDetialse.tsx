@@ -325,41 +325,96 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
   const deposit = Number(data.securityDeposit || 0);
   const totalAmount = spaceSubtotal + cleaningFee + deposit;
 
-  const handleBookingSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBookingLoading(true);
+  // const handleBookingSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setBookingLoading(true);
 
-    const payload = {
-      studioId: data._id,
-      studioTitle: data.title,
-      hostEmail: data.userEmail,
-      hostName: data.userName,
-      userEmail: session?.user?.email || "creator@studiospace.com",
-      userName: session?.user?.name || "Guest Creator",
-      bookingDate,
-      bookingTime,
-      bookingHours,
-      crewCount,
-      projectType,
-      specialNotes: specialNotes.trim(),
-      totalAmount,
-      createdAt: new Date().toISOString(),
-    };
+  //   const payload = {
+  //     studioId: data._id,
+  //     studioTitle: data.title,
+  //     hostEmail: data.userEmail,
+  //     hostName: data.userName,
+  //     userEmail: session?.user?.email,
+  //     userName: session?.user?.name ,
+  //     bookingDate,
+  //     bookingTime,
+  //     bookingHours,
+  //     crewCount,
+  //     projectType,
+  //     specialNotes: specialNotes.trim(),
+  //     totalAmount,
+  //     createdAt: new Date().toISOString(),
+  //   };
 
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      await fetch(`${apiUrl}/bookings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }).catch(() => null);
-    } catch {
-      // Graceful fallback for UI demonstration
-    } finally {
-      setBookingLoading(false);
-      setBookingSuccess(true);
-    }
+  //   try {
+  //     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  //     const res=await fetch(`${apiUrl}/booking`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(payload),
+  //     }).catch(() => null);
+  //     console.log(res);
+  //   } catch {
+     
+  //   } finally {
+  //     setBookingLoading(false);
+  //     setBookingSuccess(true);
+  //   }
+  // };
+  
+const handleBookingSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setBookingLoading(true);
+  setBookingSuccess(false);
+
+  const payload = {
+    studioId: data._id,
+    studioTitle: data.title,
+    hostEmail: data.userEmail,
+    hostName: data.userName,
+    userEmail: session?.user?.email,
+    userName: session?.user?.name,
+    bookingDate,
+    bookingTime,
+    bookingHours,
+    crewCount,
+    projectType,
+    specialNotes: specialNotes.trim(),
+    totalAmount,
+    createdAt: new Date().toISOString(),
   };
+
+  try {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+    const res = await fetch(`${apiUrl}/booking`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error("Booking failed!");
+    }
+
+    const result = await res.json();
+
+    console.log("Booking successful:", result);
+
+    setBookingSuccess(true);
+
+  } catch (error) {
+    console.error("Booking error:", error);
+    setBookingSuccess(false);
+
+  } finally {
+    setBookingLoading(false);
+  }
+};
+
 
   const resetBookingForm = () => {
     setIsBookingOpen(false);

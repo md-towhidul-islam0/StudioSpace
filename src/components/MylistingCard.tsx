@@ -345,7 +345,7 @@ const MylistingCard = ({ Email }: { Email: string | undefined }) => {
                 {/* Actions */}
                 <div className="flex shrink-0 flex-row gap-2 border-t border-border/60 pt-3 sm:w-32 sm:flex-col sm:justify-center sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
                   <Link
-                    href={`/add-studio?edit=${v._id}`}
+                    href={`/explore-studio/edit/${v._id}`}
                     aria-label={`Edit ${v.title}`}
                     className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground transition-all duration-200 hover:border-orange-500 hover:bg-orange-500 hover:text-white active:scale-[0.98] sm:flex-none"
                   >

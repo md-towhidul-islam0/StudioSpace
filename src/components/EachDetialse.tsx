@@ -500,6 +500,7 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
             <span className="text-[11px] font-normal opacity-90">/ hour</span>
           </div>
         </div>
+        
       </div>
 
       {/* MAIN TWO-COLUMN CONTENT LAYOUT */}

@@ -97,20 +97,20 @@ const MylistingCard = ({ Email }: { Email: string | undefined }) => {
   const dismissToast = (id: number) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
-useEffect(() => {
-  const loadToken = async () => {
-    try {
-      const token = await getTokenFromClient();
-      setTokenValue(token ?? null);
-    } catch (error) {
-      console.error("Token Error:", error);
-    } finally {
-      setTokenLoading(false);
-    }
-  };
+// useEffect(() => {
+//   const loadToken = async () => {
+//     try {
+//       const token = await getTokenFromClient();
+//       setTokenValue(token ?? null);
+//     } catch (error) {
+//       console.error("Token Error:", error);
+//     } finally {
+//       setTokenLoading(false);
+//     }
+//   };
 
-  loadToken();
-}, []);
+//   loadToken();
+// }, []);
 
   const loadListings = useCallback(async () => {
     controllerRef.current?.abort();
@@ -123,9 +123,9 @@ useEffect(() => {
       const res = await fetch(
         `${apiUrl}/allstudio/e/${encodeURIComponent(Email ?? "")}`,
         { cache: "no-store", signal: controller.signal,
-          headers:{
-            authorization: `Bearer ${tokenValue}`
-          }
+          // headers:{
+          //   authorization: `Bearer ${tokenValue}`
+          // }
         },
       );
       if (!res.ok) throw new Error(`Request failed (${res.status})`);

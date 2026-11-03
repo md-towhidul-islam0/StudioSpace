@@ -12,7 +12,17 @@ const page = () => {
   // console.log(token)
   return (
     <div>
-      <HeroSection></HeroSection>
+      {/* HeroSection renders Swiper, whose autoplay module reads `new Date()`
+          during render. Suspense keeps that runtime value out of the
+          prerendered shell; the fallback matches the hero's dimensions to
+          avoid layout shift when the carousel hydrates. */}
+      <Suspense
+        fallback={
+          <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto mt-8 mb-10 h-[400px] md:h-[500px] rounded-2xl bg-muted" />
+        }
+      >
+        <HeroSection></HeroSection>
+      </Suspense>
 
       <Suspense fallback={<div className="min-h-[70vh] flex flex-col items-center justify-center gap-4">
         <div className="relative flex items-center justify-center">

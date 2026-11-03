@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import NavBar from "@/components/NavBar";
@@ -39,7 +40,27 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="flex min-h-full flex-col">
-        <NavBar />
+        {/* NavBar reads usePathname(), which can't resolve while prerendering
+            dynamic routes whose params are only known at request time.
+            The skeleton below ships in the static shell and is replaced as
+            soon as the real NavBar hydrates. */}
+        <Suspense
+          fallback={
+            <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
+              <div className="mx-auto flex w-[85%] items-center justify-between py-2 md:w-[70%]">
+                <div className="h-14 w-35 rounded-lg bg-muted" />
+                <div className="hidden items-center gap-5 md:flex">
+                  <div className="h-4 w-14 rounded bg-muted" />
+                  <div className="h-4 w-24 rounded bg-muted" />
+                  <div className="h-4 w-20 rounded bg-muted" />
+                </div>
+                <div className="h-9 w-24 rounded-lg bg-muted" />
+              </div>
+            </header>
+          }
+        >
+          <NavBar />
+        </Suspense>
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

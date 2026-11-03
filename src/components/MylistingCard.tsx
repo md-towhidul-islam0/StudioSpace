@@ -86,7 +86,7 @@ const MylistingCard = ({ Email }: { Email: string | undefined }) => {
 
   const toastIdRef = useRef(0);
   const controllerRef = useRef<AbortController | null>(null);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ;
 
   const pushToast = (type: ToastData["type"], message: string) => {
     toastIdRef.current += 1;

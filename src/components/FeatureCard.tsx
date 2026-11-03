@@ -67,7 +67,7 @@ const FeatureCard = () => {
     const fetchData = async () => {
       try {
         const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          process.env.NEXT_PUBLIC_API_URL ;
         const res = await fetch(`${apiUrl}/allstudio`);
         if (res.ok) {
           const result = await res.json();

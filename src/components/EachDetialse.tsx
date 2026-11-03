@@ -41,6 +41,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import NotFound from "@/components/NotFound";
 import Toast, { type ToastData } from "@/components/Toast";
 import { authClient } from "@/lib/auth-client";
 
@@ -214,7 +215,7 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
         setLoading(true);
         setError(null);
         const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          process.env.NEXT_PUBLIC_API_URL ;
         const res = await fetch(`${apiUrl}/allstudio/d/${id}`);
         if (!res.ok) {
           throw new Error("Studio not found or unavailable.");
@@ -271,27 +272,18 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
   // Error / Not Found state
   if (error || !data) {
     return (
-      <div className="w-[90%] md:w-[85%] lg:w-[80%] mx-auto my-16">
-        <div className="rounded-3xl border border-dashed border-border bg-card/60 p-12 text-center max-w-lg mx-auto">
-          <div className="h-14 w-14 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center mx-auto mb-4">
-            <Compass className="h-7 w-7" />
-          </div>
-          <h2 className="text-xl font-extrabold text-foreground">
-            Workspace Not Found
-          </h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            The workspace details you are looking for may have been moved or is
-            temporarily offline.
-          </p>
-          <Link
-            href="/explore-studio"
-            className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl bg-orange-500 text-white font-semibold text-sm hover:bg-orange-600 transition-colors shadow-sm shadow-orange-500/25"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Browse All Studios</span>
-          </Link>
-        </div>
-      </div>
+      <NotFound
+        compact
+        code="404"
+        title="Workspace not found"
+        description={
+          error ??
+          "The workspace details you are looking for may have been moved or is temporarily offline."
+        }
+        primaryAction={{ href: "/explore-studio", label: "Browse All Studios" }}
+        secondaryAction={{ href: "/", label: "Back to Home" }}
+        showBackButton={false}
+      />
     );
   }
 
@@ -389,7 +381,7 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
 
   try {
     const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      process.env.NEXT_PUBLIC_API_URL ;
 
     const res = await fetch(`${apiUrl}/booking`, {
       method: "POST",

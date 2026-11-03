@@ -39,6 +39,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
+import NotFound from "@/components/NotFound";
 import Toast, { type ToastData } from "@/components/Toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -179,7 +180,7 @@ const EditStudioForm = ({ listingId }: { listingId: string }) => {
     "form",
   );
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ;
 
   const showToast = (type: ToastData["type"], message: string) => {
     setToast({ id: Date.now(), type, message });
@@ -347,24 +348,17 @@ const EditStudioForm = ({ listingId }: { listingId: string }) => {
   /* ---------------------------------- Error ---------------------------------- */
   if (loadError || !form || !original) {
     return (
-      <div className="mx-auto flex min-h-[60vh] w-[92%] max-w-xl flex-col items-center justify-center gap-4 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10">
-          <AlertCircle className="h-6 w-6 text-red-500" />
-        </div>
-        <h1 className="text-2xl font-extrabold tracking-tight">
-          Listing not found
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {loadError ?? "This listing doesn't exist or was already deleted."}
-        </p>
-        <Link
-          href="/my-listing"
-          className="mt-2 inline-flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to My Listings
-        </Link>
-      </div>
+      <NotFound
+        compact
+        code="404"
+        title="Listing not found"
+        description={
+          loadError ?? "This listing doesn't exist or was already deleted."
+        }
+        primaryAction={{ href: "/my-listing", label: "Back to My Listings" }}
+        secondaryAction={{ href: "/explore-studio", label: "Explore Studios" }}
+        showBackButton={false}
+      />
     );
   }
 

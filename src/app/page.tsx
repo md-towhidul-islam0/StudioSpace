@@ -4,8 +4,12 @@ import ExtraHomeSection from "@/components/ExtraHomeSection";
 import HeroSection from "@/components/HeroSection";
 import TopCard from "@/components/TopCard";
 import { Loader2 } from "lucide-react";
+import { getTokenFromServer } from "@/components/getTokenByServer";
+// import { getTokenFromClient } from "@/components/getTokenByClient";
 
 const page = () => {
+  // const token=await getTokenFromServer();
+  // console.log(token)
   return (
     <div>
       <HeroSection></HeroSection>

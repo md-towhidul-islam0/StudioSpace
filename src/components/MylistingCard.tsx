@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Toast, { type ToastData } from "@/components/Toast";
+import { getTokenFromClient } from "./getTokenByClient";
 
 type Listing = {
   _id: string;
@@ -80,6 +81,8 @@ const MylistingCard = ({ Email }: { Email: string | undefined }) => {
   const [deleteTarget, setDeleteTarget] = useState<Listing | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [toasts, setToasts] = useState<ToastData[]>([]);
+  const [tokenValue, setTokenValue] = useState<string | null>(null);
+  const [tokenLoading, setTokenLoading] = useState(true);
 
   const toastIdRef = useRef(0);
   const controllerRef = useRef<AbortController | null>(null);
@@ -94,6 +97,20 @@ const MylistingCard = ({ Email }: { Email: string | undefined }) => {
   const dismissToast = (id: number) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
+useEffect(() => {
+  const loadToken = async () => {
+    try {
+      const token = await getTokenFromClient();
+      setTokenValue(token ?? null);
+    } catch (error) {
+      console.error("Token Error:", error);
+    } finally {
+      setTokenLoading(false);
+    }
+  };
+
+  loadToken();
+}, []);
 
   const loadListings = useCallback(async () => {
     controllerRef.current?.abort();
@@ -105,7 +122,11 @@ const MylistingCard = ({ Email }: { Email: string | undefined }) => {
     try {
       const res = await fetch(
         `${apiUrl}/allstudio/e/${encodeURIComponent(Email ?? "")}`,
-        { cache: "no-store", signal: controller.signal },
+        { cache: "no-store", signal: controller.signal,
+          headers:{
+            authorization: `Bearer ${tokenValue}`
+          }
+        },
       );
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const result = await res.json();

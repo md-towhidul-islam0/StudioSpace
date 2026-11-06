@@ -44,6 +44,7 @@ import "swiper/css/pagination";
 import NotFound from "@/components/NotFound";
 import Toast, { type ToastData } from "@/components/Toast";
 import { authClient } from "@/lib/auth-client";
+import { number } from "better-auth";
 
 export interface ItypeData {
   _id: string;
@@ -60,6 +61,54 @@ export interface ItypeData {
   userName: string;
   createdAt: string;
 }
+
+export interface IbookingDataType {
+  _id:string,
+  studioId: string,
+  studioTitle: string,
+  hostEmail: string,
+  hostName: string,
+  userEmail: string,
+  userName: string,
+  bookingDate: string,
+  bookingTime: string,
+  bookingHours: number,
+  crewCount: number,
+  projectType: string,
+  specialNotes: string,
+  totalAmount: number,
+  title: string,
+  category: string,
+  hourlyRate: number,
+  securityDeposit: number,
+  maxCapacity: number,
+  location: string,
+  imageUrl: string,
+  amenities: string[],
+  detailedOverview: string,
+  createdAt: string
+}
+
+// Convert an "HH:MM" 24-hour time string to decimal hours (e.g. "14:30" -> 14.5).
+// Returns null when the value cannot be parsed.
+const parseTimeToHours = (time: string): number | null => {
+  const match = /^(\d{1,2}):(\d{2})$/.exec((time || "").trim());
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+  return hours + minutes / 60;
+};
+
+// Format decimal hours as a 12-hour clock label (e.g. 14.5 -> "2:30 PM").
+const formatHoursAsClock = (totalHours: number): string => {
+  const totalMinutes = Math.round(Math.max(0, totalHours) * 60);
+  const hours = Math.floor(totalMinutes / 60) % 24;
+  const minutes = totalMinutes % 60;
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHour = hours % 12 || 12;
+  return `${displayHour}:${String(minutes).padStart(2, "0")} ${period}`;
+};
 
 const getCategoryIcon = (category: string): LucideIcon => {
   const norm = (category || "").toLowerCase().trim();
@@ -179,6 +228,7 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
   const [specialNotes, setSpecialNotes] = useState("");
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
 
   // Form field unique IDs for accessibility
   const bookingDateId = useId();
@@ -196,6 +246,7 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
         setIsBookingOpen(false);
         setBookingSuccess(false);
         setBookingLoading(false);
+        setBookingError(null);
       }
     };
     const prevOverflow = document.body.style.overflow;
@@ -215,7 +266,7 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
         setLoading(true);
         setError(null);
         const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL ;
+          process.env.NEXT_PUBLIC_API_URL;
         const res = await fetch(`${apiUrl}/allstudio/d/${id}`);
         if (!res.ok) {
           throw new Error("Studio not found or unavailable.");
@@ -317,104 +368,127 @@ const EachDetialse = ({ id }: EachDetialseProps) => {
   const deposit = Number(data.securityDeposit || 0);
   const totalAmount = spaceSubtotal + cleaningFee + deposit;
 
-  // const handleBookingSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setBookingLoading(true);
-
-  //   const payload = {
-  //     studioId: data._id,
-  //     studioTitle: data.title,
-  //     hostEmail: data.userEmail,
-  //     hostName: data.userName,
-  //     userEmail: session?.user?.email,
-  //     userName: session?.user?.name ,
-  //     bookingDate,
-  //     bookingTime,
-  //     bookingHours,
-  //     crewCount,
-  //     projectType,
-  //     specialNotes: specialNotes.trim(),
-  //     totalAmount,
-  //     createdAt: new Date().toISOString(),
-  //   };
-
-  //   try {
-  //     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-  //     const res=await fetch(`${apiUrl}/booking`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(payload),
-  //     }).catch(() => null);
-  //     console.log(res);
-  //   } catch {
-     
-  //   } finally {
-  //     setBookingLoading(false);
-  //     setBookingSuccess(true);
-  //   }
-  // };
-  
-const handleBookingSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setBookingLoading(true);
-  setBookingSuccess(false);
-  const {_id,...otherData}=data;
-
-  const payload = {
-    studioId: data._id,
-    studioTitle: data.title,
-    hostEmail: data.userEmail,
-    hostName: data.userName,
-    // userEmail: session?.user?.email,
-    // userName: session?.user?.name,
-    bookingDate,
-    bookingTime,
-    bookingHours,
-    crewCount,
-    projectType,
-    specialNotes: specialNotes.trim(),
-    totalAmount,
-    // createdAt: new Date().toISOString(),
-    ...otherData
-  };
-  
-
-  try {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL ;
-
-    const res = await fetch(`${apiUrl}/booking`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!res.ok) {
-      throw new Error("Booking failed!");
-    }
-
-    const result = await res.json();
-
-    console.log("Booking successful:", result);
-
-    setBookingSuccess(true);
-
-  } catch (error) {
-    console.error("Booking error:", error);
+  const handleBookingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBookingLoading(true);
     setBookingSuccess(false);
+    setBookingError(null);
 
-  } finally {
-    setBookingLoading(false);
-  }
-};
+    const { _id, userEmail, userName, ...otherData } = data;
 
+    const payload = {
+      studioId: data._id,
+      studioTitle: data.title,
+      hostEmail: data.userEmail,
+      hostName: data.userName,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      bookingDate,
+      bookingTime,
+      bookingHours,
+      crewCount,
+      projectType,
+      specialNotes: specialNotes.trim(),
+      totalAmount,
+      // createdAt: new Date().toISOString(),
+      ...otherData,
+      // ...session?.user
+    };
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+      // ---------------------------------------------------------------
+      // AVAILABILITY CHECK: this studio cannot be booked by more than
+      // one user for the same date & overlapping time range.
+      // ---------------------------------------------------------------
+      const requestedStart = parseTimeToHours(bookingTime);
+      if (requestedStart === null) {
+        setBookingError("Please choose a valid start time.");
+        return;
+      }
+      const requestedEnd = requestedStart + bookingHours;
+
+      let existingBookings: IbookingDataType[] = [];
+      try {
+        const checkRes = await fetch(`${apiUrl}/booking`);
+        if (checkRes.ok) {
+          const list: unknown = await checkRes.json();
+          if (Array.isArray(list)) {
+            existingBookings = list as IbookingDataType[];
+          }
+        }
+      } catch (checkErr) {
+        // If the availability list cannot be loaded we let the request
+        // continue; the server remains the final authority.
+        console.warn("Availability check skipped:", checkErr);
+      }
+
+      const conflict = existingBookings.find((existing) => {
+        if (existing.studioId !== data._id) return false;
+        if (existing.bookingDate !== bookingDate) return false;
+
+        const existingStart = parseTimeToHours(existing.bookingTime);
+        if (existingStart === null) return false;
+
+        const existingHours = Math.max(1, Number(existing.bookingHours) || 1);
+        const existingEnd = existingStart + existingHours;
+
+        // Overlap when each range starts before the other one ends.
+        return requestedStart < existingEnd && existingStart < requestedEnd;
+      });
+
+      if (conflict) {
+        const conflictStart = parseTimeToHours(conflict.bookingTime) ?? 0;
+        const conflictEnd =
+          conflictStart + Math.max(1, Number(conflict.bookingHours) || 1);
+
+        setBookingError(
+          `This studio is already booked on ${bookingDate} from ${formatHoursAsClock(
+            conflictStart,
+          )} to ${formatHoursAsClock(
+            conflictEnd,
+          )} by another user. Please pick a different date or time slot.`,
+        );
+        return;
+      }
+
+      // ---------------------------------------------------------------
+      // No conflict -> create the booking
+      // ---------------------------------------------------------------
+      const res = await fetch(`${apiUrl}/booking`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Booking failed!");
+      }
+
+      const result = await res.json();
+
+      console.log("Booking successful:", result);
+
+      setBookingSuccess(true);
+    } catch (error) {
+      console.error("Booking error:", error);
+      setBookingSuccess(false);
+      setBookingError(
+        "We couldn't complete your booking. Please try again in a moment.",
+      );
+    } finally {
+      setBookingLoading(false);
+    }
+  };
 
   const resetBookingForm = () => {
     setIsBookingOpen(false);
     setBookingSuccess(false);
     setBookingLoading(false);
+    setBookingError(null);
   };
 
   const handleBookClick = () => {
@@ -424,6 +498,7 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
       );
       return;
     }
+    setBookingError(null);
     setIsBookingOpen(true);
   };
 
@@ -494,11 +569,10 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
           <button
             type="button"
             onClick={handleToggleSave}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-colors shadow-xs cursor-pointer ${
-              isSaved
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-colors shadow-xs cursor-pointer ${isSaved
                 ? "border-rose-500 bg-rose-500/10 text-rose-500"
                 : "border-border bg-card text-foreground hover:border-rose-500/40 hover:text-rose-500"
-            }`}
+              }`}
           >
             <Heart
               className={`h-3.5 w-3.5 ${isSaved ? "fill-rose-500 text-rose-500" : ""}`}
@@ -550,7 +624,7 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
             <span className="text-[11px] font-normal opacity-90">/ hour</span>
           </div>
         </div>
-        
+
       </div>
 
       {/* MAIN TWO-COLUMN CONTENT LAYOUT */}
@@ -1066,6 +1140,17 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
                   </div>
                 )}
 
+                {/* Booking conflict / failure alert */}
+                {bookingError && (
+                  <div
+                    role="alert"
+                    className="flex items-start gap-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-xs font-semibold leading-relaxed text-rose-500"
+                  >
+                    <X className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{bookingError}</span>
+                  </div>
+                )}
+
                 {/* Date & Start Time */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -1082,7 +1167,10 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
                         min={new Date().toISOString().split("T")[0]}
                         required
                         value={bookingDate}
-                        onChange={(e) => setBookingDate(e.target.value)}
+                        onChange={(e) => {
+                          setBookingDate(e.target.value);
+                          setBookingError(null);
+                        }}
                         className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
                       />
                     </div>
@@ -1100,7 +1188,10 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
                       type="time"
                       required
                       value={bookingTime}
-                      onChange={(e) => setBookingTime(e.target.value)}
+                      onChange={(e) => {
+                        setBookingTime(e.target.value);
+                        setBookingError(null);
+                      }}
                       className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
@@ -1129,6 +1220,7 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
                             ? 1
                             : Math.max(1, Math.min(24, val)),
                         );
+                        setBookingError(null);
                       }}
                       className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
@@ -1154,9 +1246,9 @@ const handleBookingSubmit = async (e: React.FormEvent) => {
                           Number.isNaN(val)
                             ? 1
                             : Math.max(
-                                1,
-                                Math.min(data.maxCapacity || 50, val),
-                              ),
+                              1,
+                              Math.min(data.maxCapacity || 50, val),
+                            ),
                         );
                       }}
                       className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500"
